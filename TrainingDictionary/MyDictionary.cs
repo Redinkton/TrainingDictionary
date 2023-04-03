@@ -73,7 +73,7 @@
                 : throw new KeyNotFoundException($"The given key {key} was not present in the dictionary.");
         }
 
-        string GetOrDefault(int key, string defaultValue)
+        public string GetOrDefault(int key, string defaultValue)
         {
             KeyValuePair foundElement = FindElement(key);
             return foundElement != null
