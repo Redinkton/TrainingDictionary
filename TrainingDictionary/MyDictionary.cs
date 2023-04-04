@@ -2,8 +2,8 @@
 {
     public class MyDictionary
     {
-        private List<int> keys = new List<int>();
-        private List<List<KeyValuePair>> list = new();
+        private List<int> keys { get; set; }
+        private List<List<KeyValuePair>> list { get; set; }
 
         private readonly int _defaultValue = 128;
 
@@ -16,16 +16,7 @@
             }
             set 
             {
-                int compressedKey = i % _defaultValue;
-                foreach (var element in list[compressedKey])
-                {
-                    if (i == element.Key)
-                    {
-                        element.Value = value;
-                        return;
-                    }
-                }
-                AddElement(i, value);                
+                Add(i, value);;    
             }
         }
         #endregion
@@ -37,7 +28,8 @@
 
         public MyDictionary()
         {
-            list.Capacity = _defaultValue;
+            list = new();
+            keys = new(_defaultValue);
             
             for(int i = 0; i < _defaultValue; i++)
             {
@@ -47,22 +39,33 @@
 
         public void Add(int key, string value)
         {
-            if (EqualsKey(key))
+            int compressedKey = key % _defaultValue;
+            foreach (var element in list[compressedKey])
             {
-                throw new ArgumentException($"An item with the same key has already been added. Key:{key}");
+                if (key == element.Key)
+                {
+                    element.Value = value;
+                    return;
+                }
             }
-            else
-            {
-                AddElement(key, value);
-            }
+            list[compressedKey].Add(new(key, value));
+            keys.Add(key);
+            _count++;
         }
 
         public bool Remove(int key)
         {
             KeyValuePair foundElement = FindElement(key);
-            list[key%_defaultValue].Remove(foundElement);
-            _count--;
-            return foundElement!= null ? true : false;
+            if (foundElement != null)
+            {
+                list[key % _defaultValue].Remove(foundElement);
+                _count--;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public string Get(int key)
@@ -93,37 +96,26 @@
                 foreach(var element in list[i])
                 {
                     if (value == element.Value)
+                    {
                         return true;
+                    }  
                 }
             }
             return false;
         }
 
         #region Helpers
-        public bool EqualsKey(int key) 
-        {
-            return keys.IndexOf(key) != -1 ? true : false;
-        }
-
         private KeyValuePair FindElement(int key)
         {
             int compressedKey = key % _defaultValue;
             foreach (var element in list[compressedKey])
             {
-                if (key != element.Key)
-                    continue;
-
-                return element;
+                if (key == element.Key)
+                {
+                    return element;
+                }
             }
             return null;
-        }
-
-        private void AddElement(int key, string value)
-        {
-            int compressedKey = key % _defaultValue;
-            list[compressedKey].Add(new(key, value));
-            keys.Add(key);
-            _count++;
         }
         #endregion
     }

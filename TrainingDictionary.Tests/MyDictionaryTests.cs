@@ -24,6 +24,24 @@ namespace TrainingDictionary.Tests
         }
 
         [TestMethod]
+        public void Add_AnExistingElement_AreEquals()
+        {
+            // Arrange
+            bool expected = true;
+            Map = new();
+            Dictionary = new();
+
+            // Act
+            FillDictionary();
+            Map[0] = "rewrite";
+            Dictionary[0] = "rewrite";
+
+            // Assert
+            bool actual = Equals();
+            Assert.AreEqual(expected, actual, "Map and Dictionary has different results");
+        }
+
+        [TestMethod]
         public void Remove_FirstElement_True()
         {
             // Arrange
@@ -159,6 +177,63 @@ namespace TrainingDictionary.Tests
             Assert.AreEqual(expected, actual, "This key does not contains.");
         }
 
+        [TestMethod]
+        public void Count_AddDeleteElements_True()
+        {
+            // Arrange
+            Map = new();
+            Dictionary = new();
+
+            // Act
+            FillDictionary();
+            int expected = Map.Count - 2;
+            Map.Remove(0);
+            Map.Remove(Map.Count - 1);
+            Map.Remove(2121);
+
+            // Assert
+            int actual = Map.Count;
+            Assert.AreEqual(expected, actual, "This key does not contains.");
+        }
+
+        [TestMethod]
+        public void ContainsValue_AddValue_True()
+        {
+            // Arrange
+            bool expected = true;
+            Map = new();
+            Dictionary = new();
+
+            // Act
+            Map.Add(0, "try");
+            Map.Add(1, "blanket");
+            Map.Add(2, "table");
+            Map.Add(3, "zone");
+            bool actual = Map.ContainsValue("blanket");
+
+            // Assert
+            Assert.AreEqual(expected, actual, "Map does not contains this value");
+        }
+
+        [TestMethod]
+        public void ContainsValue_AddValue_False()
+        {
+            // Arrange
+            bool expected = false;
+            Map = new();
+            Dictionary = new();
+
+            // Act
+            Map.Add(0, "try");
+            Map.Add(1, "blanket");
+            Map.Add(2, "table");
+            Map.Add(3, "zone");
+            bool actual = Map.ContainsValue("room");
+
+            // Assert
+            Assert.AreEqual(expected, actual, "Map contains this value");
+        }
+
         #region Helpers
         private void FillDictionary()
         {
@@ -187,7 +262,7 @@ namespace TrainingDictionary.Tests
 
             if (Map != null && Dictionary != null)
             {
-                for (int i = 0; i < Map.Count - 1; i++)
+                for (int i = 0; i < Map.Count; i++)
                 {
                     if (Dictionary[i] != Map[i])
                         return false;
