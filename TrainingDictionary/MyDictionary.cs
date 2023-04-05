@@ -62,10 +62,7 @@
                 _count--;
                 return true;
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
 
         public string Get(int key)
